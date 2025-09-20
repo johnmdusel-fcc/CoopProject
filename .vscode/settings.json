@@ -1,0 +1,10 @@
+{
+    "java.project.referencedLibraries": [
+        "/opt/junit/junit-platform-console-standalone.jar"
+    ],
+    "java.project.sourcePaths": [
+        "src", 
+        "test"
+    ],
+    "editor.rulers": [80]
+}

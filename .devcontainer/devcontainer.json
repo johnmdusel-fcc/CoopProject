@@ -1,0 +1,26 @@
+{
+  "name": "CMSC131 Java (Ubuntu 24.04 + OpenJDK 21 + JUnit)",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": "..",
+  },
+  "remoteUser": "ubuntu",
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "vscjava.vscode-java-pack",
+        "vscjava.vscode-java-test"
+      ],
+      "settings": {
+        "java.configuration.runtimes": [
+          { "name": "JavaSE-21", "path": "/usr/lib/jvm/java-21-openjdk-amd64" }
+        ],
+        "java.project.referencedLibraries": [
+          "lib/junit-platform-console-standalone.jar"
+      ]
+      }
+    }
+  },
+  "postCreateCommand": "java -version && junit --help"
+}
