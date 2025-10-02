@@ -143,7 +143,7 @@ For now, all we're doing is loading a file and then writing the rental items bac
 The argument of the factory method will be one line of data from the CV file, pased as a single string. **You can assume there are no syntax errors in the accounts file. ** (In practice, the CSV file would be written by a piece of software, not input by a human.)
 For example:
 ```
-"tool,xf123456,Lorenzo de Medici"
+"tool,xf123456,Lorenzo"
 ```
 The factor method needs to break this into tokens and then assign the individial values into attributes of the `RentalItem` class.
 
@@ -186,25 +186,106 @@ File save can be more ambitious. The thing to notice is that once we have tested
 
 # 3. Phase 3: Transactions
 
+In this phase we will add the functionality of loading a list of transactions from file, and processing them.
+
 ## 3.1 Transaction Class Hierarchy
+
+You will need `Transaction` and `Checkout` and `Return` transaction classes (derived classes) as discussed in section 6.3 of the Course Notes.
 
 ## 3.2 `main()` function
 
+Our `main()` function will get a new line, to load and process the transactions file. Note that with this change the `rentalitems.end.txt` file will no longer be identical to `rentalitems.txt`; it will reflect the effects of the transactions.
+
+Your program might be asked to provess any number of transactions files, one at a time, after having loaded the rental items. Since each transactions file represents one month, yo might have `transactions.jan.txt`, `transactions.feb.txt`, and so on.
+
+```
+public static void main(String[] args) {
+    Coop coop = new Coop();
+    coop.loadRentalItems("rentalitems.txt");
+    coop.processTransactions("transactions.txt");
+    coop.writeRentalItems("rentalitems.end.txt");
+}
+```
+
 ## 3.3 The Transactions File
+
+Each transactions file contains one month's worth of transactions, in CSV format. Each line represents one transaction. Here are sample lines:
+
+> `checkout,xf123456`
+
+> `return,xf123456`
+
+Note that the rental items are referred to by their unique ID. The item ID `xf123456` is a tool belonving to Lorenzo, from the rental items example. So here Lorenzo's tool has been checked out and then returned.
+
+You can assume that there are no syntax errors in the rental items file. There may, however, be logical errors, such as rental items that don't exist, checkouts that are not allowed, and so on.
 
 ## 3.4 Co-op class: `processTransactions(String filename)`
 
+This method will read the specified transactions file. For each line of the file, it will call a factory method in the `Transaction` class to make a `Transaction` object, and execute the transaction. This method should never need to know what is the exact type of each transaction object, nor what the execute methods are doing. Notionally, the routine should go like this:
+
+```
+Transaction trs = Transaction.fromCSV(csvLine);
+if (trs != null) {
+    idx itmIdx = findItem(itm.getUID());
+    if (itmIdx >= 0) {
+        RentalItem itm = rentalItems[itmIdx];
+        // conditionals checking rental item state vs trs type
+    } else {
+        // error condition: rental item not found
+    }
+}
+```
+
+The `execute` method will in tern invoke the `checkout` or `return` method of the `RentalItem` class, discussed below.
+
+When we get to test coverage, we'll see that there might be a way to improve on this and make the code more testable (and also more general).
+
 ### Transaction class factory method
+
+This method will work much the same as the `RentalItem` factory method. It will use the first token on the line to determind what type of transaction to make. it will pass the other tokens (converted to the appropriate type) to the constructors for the individual transactions.
 
 ## 3.5 Co-op class: `find` method
 
+The `Coop` class will need to use its `find` method to return a reference to a rental item, so that a transaction can operate on it.
+
 ## 3.6 Rental Item class: `checkout` and `checkin` methods
+
+The transaction objects need to change the state of the rental items. Your first thought might be to have methods called `getAvailability()` and `setAvailability()`, but that is not the best way. Encapsulation dictates that changing an object's internal data must be done by the object. There are some error conditions that can occur here and we need to think about them. For example, what if we're asked to checkout an item that's unavailable or damaged? Accordingly, we'll give the rental item class two new methods: one to rent it and another to return it. It's a good idea to use names that originate in the problem doman, so good names for these methods would be `checkOut` (to rent) and `checkIn` (to return).
+
+There will be no argument for either method (unlike the bank project's `credit` and `debit` functions). What error/consistency checks do we need to do? For example, what do you think the `checkOut` method should do if asked to check out an item that is unavailable or damaged?
+
+
+### 3.6.1 Modeling damage (*Coop project -ism*)
+
+When an item's `checkIn` method is called, its availability state will change from unavailable to either available or damaged.The `checkIn` comes with a probability that the item was damaged during its rental period:
+
+- The probability that a tool is damanged during a rental period is 0.05.
+
+- The probability that a vehicle is damaged during a rental period is 0.01.
+
+When `checkIn` is called, a number between 0 and 1 is chosen uniformly at random. The rental item's availability state becomes available or damaged based on that number's value.
+
 
 ## 3.7 Error conditions
 
+The following error conditions must be checked for:
+
+- Rental item not found
+
+- Incompatibility of rental item availablity state. *I.e.*, an attempt to check out an item that is unavailable or damaged.
+
+| Rental Item State | Attempt to checkOut (rent) | Attempt to checkIn (return) |
+|-------------------|---------------------------|-----------------------------|
+| AVAILABLE         | ok                        | error                       |
+| UNAVAILABLE       | error                     | ok                          |
+| DAMAGED           | error                     | error                       |
+
+For now, you can just output to the console when an error occurs. See, for example, the error handling you wrote for the `Coop` class `loadRentalItems` method.
+
+
 ## 3.8 Test Coverage
 
-
+You will want simple tests for the `checkOut` and `checkIn` methods. You'll also want a test that builds on these for the `processTransactions` method. To make your code more testable, consider modifying the structure outlined earlier to use an array of `Transaction` objcts. The array could be constructed while reading the file, and then passed to the method which executes all the transactions. Each of these two methods would then be individually simpler and more easily testable.
 
 # 4. Phase 4: Auditing
 
