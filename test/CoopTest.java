@@ -12,15 +12,13 @@ public class CoopTest {
     @BeforeEach
     void setUp() {
         coop = new Coop();
-        tool = new RentalItem(
+        tool = new RentalTool(
             "d437b9",
-            "Vernon",
-            RentalItemType.TOOL
+            "Vernon"
         );
-        vehicle = new RentalItem(
+        vehicle = new RentalVehicle(
             "a9dad5",
-            "Molly",
-            RentalItemType.VEHICLE
+            "Molly"
         );
     }
 
@@ -62,10 +60,9 @@ public class CoopTest {
         ) {
             Integer uid = idx;  // need unique id for each
             coop.addRentalItem(
-                new RentalItem(
+                new RentalTool(
                     uid.toString(),
-                    "Dusel",
-                    RentalItemType.TOOL
+                    "Dusel"
                 )
             );
         }
@@ -101,10 +98,9 @@ public class CoopTest {
         // --> implicitly tested by testAddRentalItem
         assertEquals(
             coop.find(
-                new RentalItem(
+                new RentalTool(
                     "0", 
-                    "Dusel", 
-                    RentalItemType.TOOL
+                    "Dusel"
                 )
             ),
             -1,
@@ -142,7 +138,7 @@ public class CoopTest {
         );
         assertEquals(
             RentalItemType.TOOL,
-            rentalItem.getType(),
+            rentalItem.getItemType(),
             "Rental item type must equal RentalItemType.TOOL"
         );
 
@@ -159,10 +155,10 @@ public class CoopTest {
         );
         assertEquals(
             RentalItemType.VEHICLE,
-            rentalItem.getType(),
+            rentalItem.getItemType(),
             "Rental item type must equal RentalItemType.VEHICLE"
         );
-    }
+    } // end: testLoadRentalItems
 
     @Test
     void testWriteRentalItems() {

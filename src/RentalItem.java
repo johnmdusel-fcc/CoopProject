@@ -1,9 +1,8 @@
-public class RentalItem {
+abstract class RentalItem {
 
     // Attributes of a rental item that don't change
     private final String uid;
     private final String ownerName;
-    private final RentalItemType itemType;
 
     // Availability state can be changed
     private RentalItemState itemState;
@@ -24,16 +23,24 @@ public class RentalItem {
         RentalItemType type = RentalItemType.valueOf(tokens[0].toUpperCase());
         String id = tokens[1];
         String owner = tokens[2];
-        return new RentalItem(id, owner, type);
+        if (type == RentalItemType.TOOL) {
+            return new RentalTool(id, owner);
+        } else if (type == RentalItemType.VEHICLE) {
+            return new RentalVehicle(id, owner);
+        } else {
+            throw new IllegalArgumentException(
+                String.format("Invalid rental item type: %s", tokens[0])
+            );
+        }
     }
 
     /**
      * Construct a new rental item
      * @param id Alphanumeric UID for this item.
      * @param owner Name of this item's owner.
-     * @param type Type of item.
+     * @throws IllegalArgumentException On null pointer reference.
      */
-    public RentalItem(String id, String owner, RentalItemType type) {
+    protected RentalItem(String id, String owner) {
         if (id != null) {
             uid = id;
         } else {
@@ -46,13 +53,6 @@ public class RentalItem {
         } else {
             throw new IllegalArgumentException(
                 "Parameter owner cannot be null."
-            );
-        }
-        if (type != null) {
-            itemType = type;
-        } else {
-            throw new IllegalArgumentException(
-                "Parameter type cannot be null."
             );
         }
         itemState = RentalItemState.AVAILABLE;
@@ -76,7 +76,7 @@ public class RentalItem {
      * Accessor for item type.
      * @return Type of this rental item.
      */
-    public RentalItemType getType() { return itemType; }
+    abstract public RentalItemType getItemType();
 
     /**
      * Accessor for UID.
@@ -91,7 +91,7 @@ public class RentalItem {
     public String toCSV() {
         return String.format(
             "%s,%s,%s",
-            itemType.name().toLowerCase(),
+            getItemType().name().toLowerCase(),
             uid,
             ownerName
         );

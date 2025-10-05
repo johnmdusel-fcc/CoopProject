@@ -10,10 +10,9 @@ public class RentalItemTest {
 
     @BeforeEach
     void setUp() {
-        tool = new RentalItem(
+        tool = new RentalTool(
             "d437b9",
-            "Vernon",
-            RentalItemType.TOOL
+            "Vernon"
         );
     }
 
@@ -31,7 +30,7 @@ public class RentalItemTest {
         // null uid
         Exception exception = assertThrows(
             IllegalArgumentException.class,
-            () -> {new RentalItem(null, "Dusel", RentalItemType.TOOL);}
+            () -> {new RentalTool(null, "Dusel");}
         );
         assertEquals(
             "Parameter id cannot be null.",
@@ -41,23 +40,13 @@ public class RentalItemTest {
         // null owner
         exception = assertThrows(
             IllegalArgumentException.class,
-            () -> {new RentalItem("0", null, RentalItemType.TOOL);}
+            () -> {new RentalTool("0", null);}
         );
         assertEquals(
             "Parameter owner cannot be null.",
             exception.getMessage()
         );
-
-        // null item type
-        exception = assertThrows(
-            IllegalArgumentException.class,
-            () -> {new RentalItem("0", "Dusel", null);}
-        );
-        assertEquals(
-            "Parameter type cannot be null.",
-            exception.getMessage()
-        );
-    }
+    } // end: testConstructorDataValidation
 
     @Test
     void testMakeThrowsOnNullInput() {
@@ -87,7 +76,7 @@ public class RentalItemTest {
         );
         assertEquals(
             RentalItemType.TOOL,
-            rentalItem.getType(),
+            rentalItem.getItemType(),
             "Rental item type must equal RentalItemType.TOOL"
         );
     }
