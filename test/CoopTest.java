@@ -110,7 +110,7 @@ public class CoopTest {
 
     @Test
     void testLoadRentalItems() {
-        String rentalItemsFilename = "test/testrentalitems.csv";
+        String rentalItemsFilename = "data/testrentalitems.csv";
         boolean result = coop.loadRentalItems(rentalItemsFilename);
         assertEquals(
             true,
