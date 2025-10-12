@@ -1,7 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.Scanner;
 
@@ -73,7 +72,6 @@ public class Coop {
      * @param filename Name of source CSV file.
      */
     public boolean loadRentalItems(String filename) {
-        boolean result = true;
         File inputFile = new File(filename);
         Scanner scan;
         try{
@@ -83,11 +81,12 @@ public class Coop {
                 RentalItem rentalItem = RentalItem.make(csvString);
                 addRentalItem(rentalItem);
             }
+            scan.close();
         } catch(FileNotFoundException e) {
             e.printStackTrace();
-            result = false;
+            return false;
         }
-        return result;
+        return true;
     }
 
     /**
@@ -95,25 +94,21 @@ public class Coop {
      * @param filename Name of destination CSV file.
      */
     public boolean writeRentalItems(String filename) {
-        boolean result = true;
         File file = new File(filename);
-        BufferedWriter writer;
+        FileWriter writer;
         try {
-            writer = new BufferedWriter(
-                new FileWriter(file)  // throws IOException
-            );
+            writer = new FileWriter(file);  // throws IOException
             for (int idx = 0; idx < nextIndex; idx++) {
                 RentalItem item = rentalItems[idx];
                 String itemCsv = item.toCSV();
-                writer.write(itemCsv);  // throws IOException
-                writer.newLine();
+                writer.write(itemCsv + System.lineSeparator());
             }
             writer.close();
         } catch(IOException e) {
             e.printStackTrace();
-            result = false;
+            return false;
         }
-        return result;
+        return true;
     }
 
 }
