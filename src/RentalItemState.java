@@ -3,7 +3,7 @@
  * 
  * AVAILABLE: Can be rented. Default state.
  * 
- * UNAVAILABLE: Cannot be rented, currently under rental.
+ * RENTED: Currently under rental.
  * 
  * DAMAGED: Cannot be rented, needs repair.
  * 
@@ -11,6 +11,6 @@
  */
 public enum RentalItemState {
     AVAILABLE, 
-    UNAVAILABLE, 
+    RENTED, 
     DAMAGED
 }
