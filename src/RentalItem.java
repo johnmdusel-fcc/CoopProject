@@ -84,6 +84,32 @@ abstract class RentalItem {
      */
     public String getUid() { return uid; }
 
+    // mutator methods
+
+    private void setAvailability(RentalItemState newState) {
+        itemState = newState;
+    }
+    
+    public boolean checkOut() {
+        if (getAvailability() == RentalItemState.AVAILABLE) {
+            setAvailability(RentalItemState.RENTED);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean checkIn() {
+        if (getAvailability() == RentalItemState.RENTED) {
+            setAvailability(RentalItemState.AVAILABLE);
+            return true;
+        } else{
+            return false;
+        }
+    }
+
+    // other methods
+
     /**
      * CSV line holding this rental item's data. 
      * @return Eg, "tool,xf123456,Lorenzo de Medici".

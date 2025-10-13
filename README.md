@@ -190,7 +190,7 @@ In this phase we will add the functionality of loading a list of transactions fr
 
 ## 3.1 Transaction Class Hierarchy
 
-You will need `Transaction` and `Checkout` and `Return` transaction classes (derived classes) as discussed in section 6.3 of the Course Notes.
+You will need a `Transaction` base class and `Rent` and `Return` subclasses (derived classes) as discussed in section 6.3 of the Course Notes.
 
 ## 3.2 `main()` function
 
@@ -248,11 +248,14 @@ This method will work much the same as the `RentalItem` factory method. It will 
 
 The `Coop` class will need to use its `find` method to return a reference to a rental item, so that a transaction can operate on it.
 
-## 3.6 Rental Item class: `checkout` and `checkin` methods
+## 3.6 Rental Item class: `checkOut` and `checkIn` methods
 
-The transaction objects need to change the state of the rental items. Your first thought might be to have methods called `getAvailability()` and `setAvailability()`, but that is not the best way. Encapsulation dictates that changing an object's internal data must be done by the object. There are some error conditions that can occur here and we need to think about them. For example, what if we're asked to checkout an item that's unavailable or damaged? Accordingly, we'll give the rental item class two new methods: one to rent it and another to return it. It's a good idea to use names that originate in the problem doman, so good names for these methods would be `checkOut` (to rent) and `checkIn` (to return).
+The transaction objects need to change the state of the rental items. Your first thought might be to have methods called `getAvailability()` and `setAvailability()`, but that is not the best way. Encapsulation dictates that changing an object's internal data must be done by the object. Accordingly, we'll give the rental item class two new methods: one to rent it and another to return it. It's a good idea to use names that originate in the problem doman, like `checkOut` and `checkIn`. There will be no argument for either method (unlike the bank project's `credit` and `debit` functions). 
 
-There will be no argument for either method (unlike the bank project's `credit` and `debit` functions). What error/consistency checks do we need to do? For example, what do you think the `checkOut` method should do if asked to check out an item that is unavailable or damaged?
+The error conditions are more restricted than in the Bank project. For example, it's not an error state if I try to rent Alice's truck but someone else is currently using it. On the other hand, it is an error to make an overdraw. 
+But it is an error to try and rent an item that isn't registered with the Co-op.
+
+What error/consistency checks do we need to do? For example, what do you think the `checkOut` method should do if asked to check out an item that is unavailable or damaged?
 
 
 ### 3.6.1 Modeling damage (*Coop project -ism*)
