@@ -3,7 +3,7 @@ abstract class Transaction {
     private final String itemID;
     public String getItemID() { return itemID; }
 
-    abstract boolean execute(RentalItem item);
+    abstract void execute(RentalItem item);
 
     protected Transaction(String itemID) {
         if (itemID != null) this.itemID = itemID;

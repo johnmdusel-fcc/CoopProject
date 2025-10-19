@@ -90,22 +90,12 @@ abstract class RentalItem {
         itemState = newState;
     }
     
-    public boolean checkOut() {
-        if (getAvailability() == RentalItemState.AVAILABLE) {
-            setAvailability(RentalItemState.RENTED);
-            return true;
-        } else {
-            return false;
-        }
+    public void checkOut() {
+        setAvailability(RentalItemState.RENTED);
     }
 
-    public boolean checkIn() {
-        if (getAvailability() == RentalItemState.RENTED) {
-            setAvailability(RentalItemState.AVAILABLE);
-            return true;
-        } else{
-            return false;
-        }
+    public void checkIn() {
+        setAvailability(RentalItemState.AVAILABLE);
     }
 
     // other methods

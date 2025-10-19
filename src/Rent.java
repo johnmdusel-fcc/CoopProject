@@ -11,9 +11,8 @@ public class Rent extends Transaction {
      * @param item - Target rental item.
      */
     @Override
-    public boolean execute(RentalItem item) {
-        // TODO implement
-        throw new UnsupportedOperationException("Not implemented.");
+    public void execute(RentalItem item) {
+        item.checkOut();
     }
 
 }
