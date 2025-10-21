@@ -15,7 +15,7 @@ public class TransactionTest {
             id,
             "Vernon"
         );
-        myRent = new Rent(id);
+        myRent = new Rental(id);
         myReturn = new Return(id);
     }
 
@@ -23,7 +23,7 @@ public class TransactionTest {
     void testConstructorDataValidation() {
         Exception e = assertThrows(
             IllegalArgumentException.class,
-            () -> {new Rent(null);}
+            () -> {new Rental(null);}
         );
         assertEquals(
             "Parameter id cannot be null.",
