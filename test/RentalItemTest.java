@@ -89,4 +89,27 @@ public class RentalItemTest {
             "tool's CSV string should be tool,d437b9,Vernon."
         );
     }
+
+    @Test
+    void testCheckInAndCheckOut() {
+        RentalItemState initAvail = tool.getAvailability();
+        assertEquals(
+            RentalItemState.AVAILABLE,
+            tool.getAvailability()
+        );
+
+        // check correctness of checkOut method
+        tool.checkOut();
+        assertEquals(
+            RentalItemState.RENTED,
+            tool.getAvailability()
+        );
+
+        // check correctness of checkIn method
+        tool.checkIn();
+        assertEquals(
+            RentalItemState.AVAILABLE,
+            tool.getAvailability()
+        );
+    }
 }
