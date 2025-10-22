@@ -12,25 +12,19 @@ public class RentalItemTest {
     void setUp() {
         tool = new RentalTool(
             "d437b9",
-            "Vernon"
+            "Vernon",
+            RentalItemState.AVAILABLE
         );
     }
 
-    @Test
-    void testDefaultValues() {
-        assertEquals(
-            RentalItemState.AVAILABLE, // expected value
-            tool.getAvailability(),  // actual value
-            "New RentalItem should be AVAILABLE."
-        );
-    }
+    // phase 1
 
     @Test
     void testConstructorDataValidation() {
         // null uid
         Exception exception = assertThrows(
             IllegalArgumentException.class,
-            () -> {new RentalTool(null, "Dusel");}
+            () -> {new RentalTool(null, "Dusel", RentalItemState.AVAILABLE);}
         );
         assertEquals(
             "Parameter id cannot be null.",
@@ -40,13 +34,25 @@ public class RentalItemTest {
         // null owner
         exception = assertThrows(
             IllegalArgumentException.class,
-            () -> {new RentalTool("0", null);}
+            () -> {new RentalTool("0", null, RentalItemState.AVAILABLE);}
         );
         assertEquals(
             "Parameter owner cannot be null.",
             exception.getMessage()
         );
+
+        // null availability
+        exception = assertThrows(
+            IllegalArgumentException.class,
+            () -> {new RentalTool("0", "Dusel", null);}
+        );
+        assertEquals(
+            "Parameter state cannot be null.",
+            exception.getMessage()
+        );
     } // end: testConstructorDataValidation
+
+    // phase 2
 
     @Test
     void testMakeThrowsOnNullInput() {
@@ -62,7 +68,7 @@ public class RentalItemTest {
 
     @Test
     void testMakePreservesData() {
-        String inputLine = "tool,xf123456,Lorenzo de Medici";
+        String inputLine = "tool,xf123456,Lorenzo de Medici,available";
         RentalItem rentalItem = RentalItem.make(inputLine);
         assertEquals(
             "xf123456",
@@ -79,33 +85,40 @@ public class RentalItemTest {
             rentalItem.getItemType(),
             "Rental item type must equal RentalItemType.TOOL"
         );
-    }
-
-    @Test
-    void testToCSV() {
         assertEquals(
-            "tool,d437b9,Vernon",
-            tool.toCSV(),
-            "tool's CSV string should be tool,d437b9,Vernon."
+            RentalItemState.AVAILABLE,
+            rentalItem.getAvailability()
         );
     }
 
     @Test
+    void testToCSV() {
+        String expected = "tool,d437b9,Vernon,available";
+        assertEquals(
+            expected,
+            tool.toCSV(),
+            "tool's CSV string should be " + expected
+        );
+    }
+
+    // phase 3
+
+    @Test
     void testCheckInAndCheckOut() {
-        RentalItemState initAvail = tool.getAvailability();
+        // tool starts out being available
         assertEquals(
             RentalItemState.AVAILABLE,
             tool.getAvailability()
         );
 
-        // check correctness of checkOut method
+        // checked-out tool is rented
         tool.checkOut();
         assertEquals(
             RentalItemState.RENTED,
             tool.getAvailability()
         );
 
-        // check correctness of checkIn method
+        // checking in reverts to available
         tool.checkIn();
         assertEquals(
             RentalItemState.AVAILABLE,

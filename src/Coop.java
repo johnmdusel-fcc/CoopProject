@@ -22,7 +22,7 @@ public class Coop {
      * @return true if item is successfully added, false otherwise.
      */
     public boolean addRentalItem(RentalItem item) {
-        if (find(item) == -1) {  // item absent from rentalItems
+        if (find(item.getUid()) == -1) {  // item absent from rentalItems
             if (nextIndex < rentalItems.length) {
                 rentalItems[nextIndex] = item;
             } else if (nextIndex == rentalItems.length) {  // increase capacity
@@ -47,10 +47,10 @@ public class Coop {
      * @param item Rental item to search for.
      * @return Index of rental item, if present. Otherwise -1.
      */
-    public int find(RentalItem item) {
+    public int find(String id) {
         for (int idx = 0; idx < nextIndex; idx++) {
             if (
-                rentalItems[idx].getUid() == item.getUid()
+                rentalItems[idx].getUid().equals(id)
             ) {
                 return idx;
             }
@@ -109,6 +109,38 @@ public class Coop {
             return false;
         }
         return true;
+    }
+
+    // phase 3
+
+    /**
+     * Process transactions that are stored in a CSV file.
+     * @param fileName - Points to CSV file.
+     * @return - Number of transactions that were processed.
+     */
+    public int processTransactions(String fileName) {
+        int numTxProcessed = 0;
+        Scanner scan;
+        try {
+            scan = new Scanner(new File(fileName));
+            while (scan.hasNextLine()) {
+                Transaction tx = Transaction.make(scan.nextLine());
+                int targetIdx = find(tx.getItemID());
+                if (targetIdx >= 0) { // target item present
+                    RentalItem target = rentalItems[find(tx.getItemID())];
+                    if (tx.validate(target)) { // transaction can execute
+                        tx.execute(target);
+                    }
+                } else { // target item absent
+                    System.out.println("Item " + tx.getItemID() + " not found");
+                }
+                numTxProcessed++;
+            }
+            scan.close();
+        } catch(FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return numTxProcessed;
     }
 
 }

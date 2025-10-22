@@ -2,6 +2,7 @@ public class Main {
 
     public static void main(String[] args) {
         phase2();
+        phase3();
     }
 
     private static void phase2() {
@@ -17,7 +18,20 @@ public class Main {
 
         Coop coopReload = new Coop();
         coopReload.loadRentalItems(rentalItemsFilename);
+    }
+
+    private static void phase3() {
+        Coop coop = new Coop();
         
+        // ignoring boolean output here
+        coop.loadRentalItems("data/rentalitems.csv");
+
+        int numTx = coop.processTransactions("data/transactions.csv");
+        
+        // ignoring boolean output here
+        coop.writeRentalItems("data/rentalitemsend.csv");
+        
+        System.out.println("# Transactions processed: " + numTx);
     }
 
 } // end class: Main

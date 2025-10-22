@@ -14,13 +14,17 @@ public class CoopTest {
         coop = new Coop();
         tool = new RentalTool(
             "d437b9",
-            "Vernon"
+            "Vernon",
+            RentalItemState.AVAILABLE
         );
         vehicle = new RentalVehicle(
             "a9dad5",
-            "Molly"
+            "Molly",
+            RentalItemState.AVAILABLE
         );
     }
+
+    // phase 1
 
     @Test
     void testAddRentalItem() {
@@ -62,7 +66,8 @@ public class CoopTest {
             coop.addRentalItem(
                 new RentalTool(
                     uid.toString(),
-                    "Dusel"
+                    "Dusel",
+                    RentalItemState.AVAILABLE
                 )
             );
         }
@@ -84,12 +89,12 @@ public class CoopTest {
         coop.addRentalItem(tool);
         coop.addRentalItem(vehicle);
         assertEquals(
-            coop.find(tool),
+            coop.find(tool.getUid()),
             0,
             "tool should be at index 0."
         );
         assertEquals(
-            coop.find(vehicle),
+            coop.find(vehicle.getUid()),
             1,
             "vehicle should be at index 1."
         );
@@ -97,16 +102,13 @@ public class CoopTest {
         // find item absent from coop's rentalItems
         // --> implicitly tested by testAddRentalItem
         assertEquals(
-            coop.find(
-                new RentalTool(
-                    "0", 
-                    "Dusel"
-                )
-            ),
+            coop.find("0"),
             -1,
             "absent item should return index -1."
         );
     }
+
+    // phase 2
 
     @Test
     void testLoadRentalItems() {
@@ -162,9 +164,8 @@ public class CoopTest {
 
     @Test
     void testWriteRentalItems() {
-        // loading rental items already tested
         String rentalItemsFilename = "test/testrentalitems.csv";
-        boolean result = coop.loadRentalItems(rentalItemsFilename);
+        coop.loadRentalItems(rentalItemsFilename); // already tested
         
         // write
         rentalItemsFilename = "test/testrentalitems-out.csv";
@@ -189,6 +190,24 @@ public class CoopTest {
                 String.format("Rental item %s should match.", idx)
             );
         }
+    }
+
+    // phase 3
+
+    @Test 
+    void testProcessTransactionsFailure() {
+        assertEquals(
+            0,
+            coop.processTransactions("invalid.csv")
+        );
+    }
+
+    @Test
+    void testProcessTransactionsSuccess() {
+        assertEquals(
+            3,
+            coop.processTransactions("data/testtransactions.csv")
+        );
     }
 
 }  // end: class CoopTest

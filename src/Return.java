@@ -15,4 +15,14 @@ public class Return extends Transaction {
         item.checkIn();
     }
 
+    @Override
+    public boolean validate(RentalItem item) {
+        if (item.getAvailability() == RentalItemState.RENTED) {
+            return true;
+        } else {
+            System.out.println("Cannot return item " + item.getUid());
+            return false;
+        }
+    }
+
 }

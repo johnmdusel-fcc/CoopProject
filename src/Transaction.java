@@ -4,6 +4,14 @@ abstract class Transaction {
     public String getItemID() { return itemID; }
 
     abstract void execute(RentalItem item);
+    
+    /**
+     * Check that this transaction's execution is compatible with item's
+     * availability state.
+     * @param item - Target rental item for this transaction.
+     * @return - true if and only if the execute operation is possible.
+     */
+    abstract boolean validate(RentalItem item);
 
     protected Transaction(String itemID) {
         if (itemID != null) this.itemID = itemID;

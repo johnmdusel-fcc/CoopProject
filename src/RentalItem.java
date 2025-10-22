@@ -9,7 +9,7 @@ abstract class RentalItem {
 
     /**
      * Factory method for constructing a RentalItem object from a CSV line. 
-     * @param inputLine Eg, "tool,xf123456,Lorenzo de Medici"
+     * @param inputLine Eg, "tool,xf123456,Lorenzo de Medici, available"
      * @return new RentalItem from supplied values.
      * @throws IllegalArgumentException on null input.
      */
@@ -20,17 +20,15 @@ abstract class RentalItem {
             );
         }
         String[] tokens = inputLine.split(",");
+        // throws on invalid type or state
         RentalItemType type = RentalItemType.valueOf(tokens[0].toUpperCase());
+        RentalItemState state = RentalItemState.valueOf(tokens[3].toUpperCase());
         String id = tokens[1];
         String owner = tokens[2];
         if (type == RentalItemType.TOOL) {
-            return new RentalTool(id, owner);
-        } else if (type == RentalItemType.VEHICLE) {
-            return new RentalVehicle(id, owner);
+            return new RentalTool(id, owner, state);
         } else {
-            throw new IllegalArgumentException(
-                String.format("Invalid rental item type: %s", tokens[0])
-            );
+            return new RentalVehicle(id, owner, state);
         }
     }
 
@@ -40,7 +38,7 @@ abstract class RentalItem {
      * @param owner Name of this item's owner.
      * @throws IllegalArgumentException On null pointer reference.
      */
-    protected RentalItem(String id, String owner) {
+    protected RentalItem(String id, String owner, RentalItemState state) {
         if (id != null) {
             uid = id;
         } else {
@@ -55,7 +53,13 @@ abstract class RentalItem {
                 "Parameter owner cannot be null."
             );
         }
-        itemState = RentalItemState.AVAILABLE;
+        if (state != null) {
+            itemState = RentalItemState.AVAILABLE;
+        } else {
+            throw new IllegalArgumentException(
+                "Parameter state cannot be null."
+            );
+        }
     }
 
     // Accessor methods
@@ -105,11 +109,11 @@ abstract class RentalItem {
      * @return Eg, "tool,xf123456,Lorenzo de Medici".
      */
     public String toCSV() {
-        return String.format(
-            "%s,%s,%s",
+        return String.join(",", 
             getItemType().name().toLowerCase(),
-            uid,
-            ownerName
+            getUid(),
+            getOwner(),
+            getAvailability().name().toLowerCase()
         );
     }
 

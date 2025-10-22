@@ -13,11 +13,14 @@ public class TransactionTest {
         String id = "d437b9";
         tool = new RentalTool(
             id,
-            "Vernon"
+            "Vernon",
+            RentalItemState.AVAILABLE
         );
         myRent = new Rental(id);
         myReturn = new Return(id);
     }
+
+    // phase 3
 
     @Test 
     void testConstructorDataValidation() {
@@ -53,17 +56,38 @@ public class TransactionTest {
         );
     }
 
+
     @Test
-    void testExecuteCorrectness() {
-        myRent.execute(tool);
-        assertEquals(
-            RentalItemState.RENTED, // expected
-            tool.getAvailability() // actual
+    void testValidationAndExecuteCorrectness() {
+        // tool is initialized as available
+        assertEquals( // check rental can execute on tool
+            true, // expected
+            myRent.validate(tool) // actual
         );
-        myReturn.execute(tool);
-        assertEquals(
-            RentalItemState.AVAILABLE,
+        assertEquals( // check return cannot execute on tool
+            false,
+            myReturn.validate(tool)
+        );
+
+        myRent.execute(tool); // tool is now rented
+        assertEquals( // check rental cannot execute on tool
+            false,
+            myRent.validate(tool)
+        );
+        assertEquals( // check return can execute on tool
+            true,
+            myReturn.validate(tool)
+        );
+        assertEquals( // check tool is now rented
+            RentalItemState.RENTED,
             tool.getAvailability()
+        );
+
+        myReturn.execute(tool);
+        assertEquals( // check tool is now available
+            RentalItemState.AVAILABLE,
+            tool.getAvailability(),
+            "Tool has been returned."
         );
     }
 

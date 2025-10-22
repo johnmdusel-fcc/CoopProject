@@ -15,4 +15,14 @@ public class Rental extends Transaction {
         item.checkOut();
     }
 
+    @Override
+    public boolean validate(RentalItem item) {
+        if (item.getAvailability() == RentalItemState.AVAILABLE) {
+            return true;
+        } else {
+            System.out.println("Cannot rent item " + item.getUid());
+            return false;
+        }
+    }
+
 }
