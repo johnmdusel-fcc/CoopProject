@@ -10,6 +10,11 @@ abstract class Transaction {
         else throw new IllegalArgumentException("Parameter id cannot be null.");
     }
 
+    /**
+     * Factory method for constructing a Transaction object from a CSV line. 
+     * @param inputLine - Eg, "rental,rp332960"
+     * @return - Transaction from supplied values.
+     */
     protected static Transaction make(String inputLine) {
         String[] tokens;
         try {
@@ -26,7 +31,7 @@ abstract class Transaction {
         String id = tokens[1];
         
         if (type == TransactionType.RENTAL) {
-            return new Rent(id);
+            return new Rental(id);
         }
         else {
             return new Return(id);
