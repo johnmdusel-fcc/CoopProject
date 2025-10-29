@@ -1,5 +1,7 @@
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.io.IOException;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -7,6 +9,7 @@ public class TransactionTest {
 
     private RentalItem tool;
     private Transaction myRent, myReturn;
+    private Audit audit;
 
     @BeforeEach
     void setUp() {
@@ -18,6 +21,9 @@ public class TransactionTest {
         );
         myRent = new Rental(id);
         myReturn = new Return(id);
+        try {
+            audit = new Audit("test/audittest.log");
+        } catch (IOException e) { e.printStackTrace(); }
     }
 
     // phase 3
@@ -62,28 +68,28 @@ public class TransactionTest {
         // tool is initialized as available
         assertEquals( // check rental can execute on tool
             true, // expected
-            myRent.validate(tool) // actual
+            myRent.validate(tool, audit) // actual
         );
         assertEquals( // check return cannot execute on tool
             false,
-            myReturn.validate(tool)
+            myReturn.validate(tool, audit)
         );
 
-        myRent.execute(tool); // tool is now rented
+        myRent.execute(tool, audit); // tool is now rented
         assertEquals( // check rental cannot execute on tool
             false,
-            myRent.validate(tool)
+            myRent.validate(tool, audit)
         );
         assertEquals( // check return can execute on tool
             true,
-            myReturn.validate(tool)
+            myReturn.validate(tool, audit)
         );
         assertEquals( // check tool is now rented
             RentalItemState.RENTED,
             tool.getAvailability()
         );
 
-        myReturn.execute(tool);
+        myReturn.execute(tool, audit);
         assertEquals( // check tool is now available
             RentalItemState.AVAILABLE,
             tool.getAvailability(),

@@ -115,29 +115,38 @@ public class Coop {
 
     /**
      * Process transactions that are stored in a CSV file.
-     * @param fileName - Points to CSV file.
+     * @param txFileName - Points to CSV file.
+     * @param auditFileName - Points to audit trail file.
      * @return - Number of transactions that were processed.
      */
-    public int processTransactions(String fileName) {
+    public int processTransactions(String txFileName, String auditFileName) {
         int numTxProcessed = 0;
-        Scanner scan;
         try {
-            scan = new Scanner(new File(fileName));
-            while (scan.hasNextLine()) {
-                Transaction tx = Transaction.make(scan.nextLine());
-                int targetIdx = find(tx.getItemID());
-                if (targetIdx >= 0) { // target item present
-                    RentalItem target = rentalItems[find(tx.getItemID())];
-                    if (tx.validate(target)) { // transaction can execute
-                        tx.execute(target);
+            Audit audit = new Audit(auditFileName);
+            Scanner scan;
+            try {
+                scan = new Scanner(new File(txFileName));
+                while (scan.hasNextLine()) {
+                    Transaction tx = Transaction.make(scan.nextLine());
+                    int targetIdx = find(tx.getItemID());
+                    if (targetIdx >= 0) { // target item present
+                        RentalItem target = rentalItems[find(tx.getItemID())];
+                        if (tx.validate(target, audit)) { // transaction can execute
+                            tx.execute(target, audit);
+                        }
+                    } else { // target item absent
+                        audit.recordNoSuchItem(tx);
                     }
-                } else { // target item absent
-                    System.out.println("Item " + tx.getItemID() + " not found");
+                    numTxProcessed++;
                 }
-                numTxProcessed++;
+                scan.close();
+            } catch(FileNotFoundException e) {
+                // bad fileName passed to Scanner constructor
+                e.printStackTrace();
             }
-            scan.close();
-        } catch(FileNotFoundException e) {
+            audit.close();
+        } catch (IOException e) {
+            // problem wile Audit constructor
             e.printStackTrace();
         }
         return numTxProcessed;

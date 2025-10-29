@@ -3,7 +3,7 @@ abstract class Transaction {
     private final String itemID;
     public String getItemID() { return itemID; }
 
-    abstract void execute(RentalItem item);
+    abstract void execute(RentalItem item, Audit audit);
     
     /**
      * Check that this transaction's execution is compatible with item's
@@ -11,7 +11,7 @@ abstract class Transaction {
      * @param item - Target rental item for this transaction.
      * @return - true if and only if the execute operation is possible.
      */
-    abstract boolean validate(RentalItem item);
+    abstract boolean validate(RentalItem item, Audit audit);
 
     protected Transaction(String itemID) {
         if (itemID != null) this.itemID = itemID;

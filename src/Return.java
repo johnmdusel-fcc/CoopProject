@@ -11,16 +11,17 @@ public class Return extends Transaction {
      * @param item - Target rental item.
      */
     @Override
-    public void execute(RentalItem item) {
+    public void execute(RentalItem item, Audit audit) {
         item.checkIn();
+        audit.recordExecute(this, item);
     }
 
     @Override
-    public boolean validate(RentalItem item) {
+    public boolean validate(RentalItem item, Audit audit) {
         if (item.getAvailability() == RentalItemState.RENTED) {
             return true;
         } else {
-            System.out.println("Cannot return item " + item.getUid());
+            audit.recordNonsufficientAvailability(this, item);
             return false;
         }
     }

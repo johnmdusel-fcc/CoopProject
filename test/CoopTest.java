@@ -1,5 +1,8 @@
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.io.IOError;
+import java.io.IOException;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -8,6 +11,8 @@ public class CoopTest {
     private Coop coop;
     private RentalItem tool;
     private RentalItem vehicle;
+    private String testTxFilename;
+    private String auditFilename;
 
     @BeforeEach
     void setUp() {
@@ -22,6 +27,8 @@ public class CoopTest {
             "Molly",
             RentalItemState.AVAILABLE
         );
+        testTxFilename = "data/testtransactions.csv";
+        auditFilename = "test/audittest.log";
     }
 
     // phase 1
@@ -198,7 +205,7 @@ public class CoopTest {
     void testProcessTransactionsFailure() {
         assertEquals(
             0,
-            coop.processTransactions("invalid.csv")
+            coop.processTransactions("invalid.csv", auditFilename)
         );
     }
 
@@ -206,7 +213,7 @@ public class CoopTest {
     void testProcessTransactionsSuccess() {
         assertEquals(
             3,
-            coop.processTransactions("data/testtransactions.csv")
+            coop.processTransactions(testTxFilename, auditFilename)
         );
     }
 
