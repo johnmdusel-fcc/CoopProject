@@ -25,4 +25,9 @@ public class Rental extends Transaction {
         }
     }
 
+    @Override
+    public String toString() {
+        return "rent item " + getItemID();
+    }
+
 }

@@ -25,4 +25,9 @@ public class Return extends Transaction {
         }
     }
 
+    @Override
+    public String toString() {
+        return "return item " + getItemID();
+    }
+
 }
